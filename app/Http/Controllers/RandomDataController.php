@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\RandomDataCsvProcess;
 use App\Models\RandomData;
 use Illuminate\Http\Request;
+use App\Jobs\RandomDataCsvProcess;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Bus;
 
 class RandomDataController extends Controller
@@ -43,5 +44,15 @@ class RandomDataController extends Controller
     {
         $batchId = request('id');
         return Bus::findBatch($batchId);
+    }
+
+    public function batchInProgress()
+    {
+        $batches = DB::table('job_batches')->where('pending_jobs', '>', 0)->get();
+        if (count($batches) > 0) {
+            return Bus::findBatch($batches[0]->id);
+        }
+
+        return [];
     }
 }
