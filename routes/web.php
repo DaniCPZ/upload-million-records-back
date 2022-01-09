@@ -10,5 +10,3 @@ Route::get('/', function () {
 Route::get('/upload', [RandomDataController::class, 'index']);
 
 Route::post('/upload', [RandomDataController::class, 'upload']);
-
-Route::get('/store-data', [RandomDataController::class, 'store']);
