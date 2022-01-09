@@ -6,9 +6,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::get('/upload', [RandomDataController::class, 'index']);
-
-Route::post('/upload', [RandomDataController::class, 'upload']);
-
-Route::get('/batch', [RandomDataController::class, 'batch']);
