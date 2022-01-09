@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\RandomDataCsvProcess;
 use App\Models\RandomData;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Bus;
 
 class RandomDataController extends Controller
 {
@@ -21,6 +22,8 @@ class RandomDataController extends Controller
             $chunks = array_chunk($data, 1000);
 
             $header = [];
+
+            $batch = Bus::batch([])->dispatch();
             foreach($chunks as $key => $chunk){
                 $data = array_map('str_getcsv', $chunk);
 
@@ -29,10 +32,16 @@ class RandomDataController extends Controller
                     unset($data[0]);
                 }
 
-                RandomDataCsvProcess::dispatch($data, $header);
+                $batch->add(new RandomDataCsvProcess($data, $header));
             }
-            return 'Done';
+            return $batch;
         }
         return 'Please upload file';
+    }
+
+    public function batch()
+    {
+        $batchId = request('id');
+        return Bus::findBatch($batchId);
     }
 }
